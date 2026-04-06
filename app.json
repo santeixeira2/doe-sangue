@@ -1,0 +1,33 @@
+{
+  "expo": {
+    "name": "Doe Sangue",
+    "slug": "doacao-sangue",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "scheme": "doacao-sangue",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "splash": {
+      "backgroundColor": "#E53935",
+      "resizeMode": "contain"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.doacao.sangue"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#E53935"
+      },
+      "package": "com.doacao.sangue"
+    },
+    "web": {
+      "bundler": "metro",
+      "output": "static"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-font"
+    ]
+  }
+}
