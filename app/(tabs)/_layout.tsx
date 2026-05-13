@@ -1,93 +1,73 @@
 import React from 'react';
-import { View, TouchableOpacity, StyleSheet, Platform } from 'react-native';
 import { Tabs } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { colors } from '../../src/theme/colors';
-import { borderRadius } from '../../src/theme/spacing';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { GlassTabBarBackground } from '../../src/components/GlassTabBarBackground';
+import {
+  DARK_TAB_INACTIVE,
+  LIGHT_TAB_INACTIVE,
+  TAB_ICON_SIZE,
+  floatingTabBarStyle,
+  tabBarItemStyle,
+  tabBarLabelStyle,
+  useGlassTabBarScheme,
+} from '../../src/navigation/glassTabBar';
+
+const tabIcon = {
+  index: { focused: 'home' as const, outline: 'home-outline' as const },
+  requests: { focused: 'water' as const, outline: 'water-outline' as const },
+  profile: { focused: 'person' as const, outline: 'person-outline' as const },
+};
 
 export default function TabLayout() {
+  const insets = useSafeAreaInsets();
+  const { isDark, tokens } = useGlassTabBarScheme();
+
   return (
     <Tabs
-      screenOptions={{
+      screenOptions={({ route }) => ({
         headerShown: false,
-        tabBarShowLabel: false,
-        tabBarStyle: styles.tabBar,
-        tabBarActiveTintColor: '#FFFFFF',
-        tabBarInactiveTintColor: 'rgba(255,255,255,0.5)',
-      }}
+        tabBarShowLabel: true,
+        tabBarLabelStyle,
+        tabBarItemStyle,
+        tabBarActiveTintColor: tokens.activeTint,
+        tabBarInactiveTintColor: isDark ? DARK_TAB_INACTIVE : LIGHT_TAB_INACTIVE,
+        tabBarStyle: floatingTabBarStyle(insets, isDark),
+        tabBarBackground: () => <GlassTabBarBackground />,
+        tabBarIcon: ({ color, focused }) => {
+          const name = route.name as keyof typeof tabIcon;
+          const icons = tabIcon[name];
+          if (!icons) {
+            return <Ionicons name="ellipse-outline" size={TAB_ICON_SIZE} color={color} />;
+          }
+          return (
+            <Ionicons
+              name={focused ? icons.focused : icons.outline}
+              size={TAB_ICON_SIZE}
+              color={color}
+            />
+          );
+        },
+      })}
     >
       <Tabs.Screen
         name="index"
         options={{
-          tabBarIcon: ({ focused, color }) => (
-            <View style={[styles.tabItem, focused && styles.tabItemActive]}>
-              <Ionicons
-                name={focused ? 'home' : 'home-outline'}
-                size={22}
-                color={color}
-              />
-            </View>
-          ),
+          title: 'início',
         }}
       />
       <Tabs.Screen
         name="requests"
         options={{
-          tabBarIcon: ({ focused, color }) => (
-            <View style={[styles.tabItem, focused && styles.tabItemActive]}>
-              <Ionicons
-                name={focused ? 'water' : 'water-outline'}
-                size={22}
-                color={color}
-              />
-            </View>
-          ),
+          title: 'pedidos',
         }}
       />
       <Tabs.Screen
         name="profile"
         options={{
-          tabBarIcon: ({ focused, color }) => (
-            <View style={[styles.tabItem, focused && styles.tabItemActive]}>
-              <Ionicons
-                name={focused ? 'person' : 'person-outline'}
-                size={22}
-                color={color}
-              />
-            </View>
-          ),
+          title: 'perfil',
         }}
       />
     </Tabs>
   );
 }
-
-const styles = StyleSheet.create({
-  tabBar: {
-    position: 'absolute',
-    bottom: 24,
-    left: 80,
-    right: 80,
-    height: 60,
-    backgroundColor: colors.dark.DEFAULT,
-    borderRadius: 30,
-    borderTopWidth: 0,
-    paddingBottom: 0,
-    paddingTop: 0,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.2,
-    shadowRadius: 16,
-    elevation: 10,
-  },
-  tabItem: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  tabItemActive: {
-    backgroundColor: 'rgba(255,255,255,0.15)',
-  },
-});

@@ -1,5 +1,25 @@
 import { useState, useCallback, useEffect } from 'react';
-import { geolocationBridge, GeoPoint, useLocationUpdates } from 'react-native-geolocation-bridge';
+import { PermissionsAndroid, Platform } from 'react-native';
+import {
+  geolocationBridge,
+  GeoPoint,
+  useLocationUpdates,
+} from '@santeixeira2/react-native-geolocation-bridge';
+
+async function ensureAndroidFineLocation(): Promise<boolean> {
+  if (Platform.OS !== 'android') return true;
+  const result = await PermissionsAndroid.request(
+    PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+    {
+      title: 'Localização',
+      message:
+        'Precisamos da sua localização para calcular distâncias até pedidos de doação e hemocentros.',
+      buttonPositive: 'OK',
+      buttonNegative: 'Cancelar',
+    }
+  );
+  return result === PermissionsAndroid.RESULTS.GRANTED;
+}
 
 export function useLocation() {
   const [location, setLocation] = useState<GeoPoint | null>(null);
@@ -7,6 +27,9 @@ export function useLocation() {
 
   const checkPermission = useCallback(async () => {
     try {
+      if (Platform.OS === 'android') {
+        return ensureAndroidFineLocation();
+      }
       let hasPermission = await geolocationBridge.hasLocationPermission();
       if (!hasPermission) {
         hasPermission = await geolocationBridge.requestLocationPermission();

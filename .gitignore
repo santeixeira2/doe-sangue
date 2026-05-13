@@ -11,3 +11,15 @@ npm-debug.*
 web-build/
 .env
 .env.*
+
+# macOS
+.DS_Store
+
+# IDE
+.vscode/
+.idea/
+
+# iOS build artifacts
+ios/Pods/
+ios/build/
+ios/.xcode.env.local

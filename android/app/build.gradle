@@ -124,6 +124,12 @@ android {
     androidResources {
         ignoreAssetsPattern '!.svn:!.git:!.ds_store:!*.scc:!CVS:!thumbs.db:!picasa.ini:!*~'
     }
+    // @santeixeira2/react-native-geolocation-bridge ships sources but no Gradle library — compile from node_modules
+    sourceSets {
+        main {
+            java.srcDirs += "$rootDir/../../node_modules/@santeixeira2/react-native-geolocation-bridge/android/src/main/java"
+        }
+    }
 }
 
 // Apply static values from `gradle.properties` to the `android.packagingOptions`
